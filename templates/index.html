@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Image Generator</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            color: white;
+        }
+        .container {
+            max-width: 700px;
+        }
+        .card {
+            background: #0f3460;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .btn-generate {
+            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            color: white;
+            transition: 0.3s;
+        }
+        .btn-generate:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+        .image-container img {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+            transition: transform 0.3s;
+        }
+        .image-container img:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5 text-center">
+        <h1 class="fw-bold text-light">AI Image Generator</h1>
+        <p class="text-muted">Generate stunning AI-powered images with a simple prompt.</p>
+        <div class="card p-4 mt-4">
+            <div class="mb-3">
+                <label for="prompt" class="form-label fw-semibold">Enter your prompt</label>
+                <input type="text" id="prompt" class="form-control" placeholder="Describe the image...">
+            </div>
+            <div class="mb-3">
+                <label for="num_images" class="form-label fw-semibold">Number of images</label>
+                <input type="number" id="num_images" class="form-control" min="1" max="5" value="1">
+            </div>
+            <div class="mb-3">
+                <label for="resolution" class="form-label fw-semibold">Select Resolution</label>
+                <select id="resolution" class="form-select">
+                    <option value="1024x1024">1024x1024</option>
+                    <option value="512x512">512x512</option>
+                    <option value="256x256">256x256</option>
+                </select>
+            </div>
+            <button class="btn btn-generate w-100" onclick="generateImages()">Generate Image</button>
+        </div>
+        <div id="imageResults" class="mt-4 row"></div>
+    </div>
+
+    <script>
+        function generateImages() {
+            const prompt = document.getElementById('prompt').value;
+            const num_images = document.getElementById('num_images').value;
+            const resolution = document.getElementById('resolution').value;
+            
+            fetch('/generate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ prompt, num_images, resolution })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const imageResults = document.getElementById('imageResults');
+                imageResults.innerHTML = '';
+                if (data.image_urls) {
+                    data.image_urls.forEach(url => {
+                        const imgElement = document.createElement('div');
+                        imgElement.className = 'col-md-4 mt-3 image-container';
+                        imgElement.innerHTML = `<img src="${url}" class="img-fluid shadow-sm">`;
+                        imageResults.appendChild(imgElement);
+                    });
+                } else {
+                    alert("Error generating images: " + data.error);
+                }
+            });
+        }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
