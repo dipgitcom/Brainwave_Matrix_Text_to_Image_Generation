@@ -7,6 +7,8 @@ This project is a **Text-to-Image** generation model that allows users to conver
 - **Text Input**: Users can provide a textual description (e.g., "A sunset over a mountain").
 - **Image Generation**: The system generates an image based on the provided description.
 - **Multiple Image Output**: Generates multiple variations of the same prompt, providing users with diverse options.
+
+  ![Text to Image Example](ui.png)
   
 ## Technologies Used
 - **Python**: For backend processing and AI model usage.
